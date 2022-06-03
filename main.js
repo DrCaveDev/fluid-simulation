@@ -1,22 +1,23 @@
 const waterCanvas = document.getElementById('waterCanvas');
-waterCanvas.width = 5;
-waterCanvas.height = 5;
+waterCanvas.width = 200;
+waterCanvas.height = 200;
 
 const waterCtx = waterCanvas.getContext('2d');
 
-const waterSimulation = new WaterSimulation(0, 0, waterCanvas.width, waterCanvas.height, 3);
+const waterSimulation = new WaterSimulation(0, 0, waterCanvas.width, waterCanvas.height, 6);
 
 console.log('waterSimulation', waterSimulation);
 
 let mouseDown = false;
+let updated = false;
 waterCanvas.addEventListener('mousedown', (e) => {
   mouseDown = true;
-  console.log('mouse down');  
 });
 
 waterCanvas.addEventListener('mouseup', (e) => {
-  console.log('mouse up');
   mouseDown = false;
+  updated = false;
+  console.log('vel', { x: waterSimulation.velocityX, y: waterSimulation.velocityY });
 });
 let lastX;
 let lastY;
@@ -40,13 +41,14 @@ waterCanvas.addEventListener('mousemove', (e) => {
     lastY = canvasY;
   }
 });
-
 animate();
 
 function animate(time) {
   // waterSimulation.update(1, 1);
-  if (mouseDown) {
-    waterSimulation.update(.1, .1);
+  if (mouseDown && !updated) {
+    waterSimulation.update(.1, .01, .001);
+    updated = true;
+    // console.log('vel', waterSimulation.density);
   }
 
   waterSimulation.draw(waterCtx);
@@ -54,6 +56,6 @@ function animate(time) {
   //waterSimulation.draw(waterCtx);
   // waterSimulation.update(5, 1);
   // waterSimulation.draw(waterCtx);
-  console.log('ws', waterSimulation.density[waterSimulation.IX(2, 2)]);
+
   requestAnimationFrame(animate);
 }
